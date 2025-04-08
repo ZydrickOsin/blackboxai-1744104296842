@@ -1,34 +1,6 @@
-class AuthService {
-  static login(username, password) {
-    // In a real app, this would call your backend API
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    const user = users.find(u => u.username === username && u.password === password);
-    
-    if (user) {
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      return true;
-    }
-    return false;
-  }
-
-  static logout() {
-    localStorage.removeItem('currentUser');
-  }
-
-  static register(username, password) {
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    if (users.some(u => u.username === username)) {
-      return false;
-    }
-    users.push({ username, password });
-    localStorage.setItem('users', JSON.stringify(users));
-    return true;
-  }
-
-  static getCurrentUser() {
-    return JSON.parse(localStorage.getItem('currentUser'));
-  }
-}
+const supabaseUrl = 'https://your-project.supabase.co';
+const supabaseKey = 'your-anon-key';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 class SariBooks {
   constructor() {
@@ -37,10 +9,10 @@ class SariBooks {
     this.initTransactionForm();
   }
 
-  initAuth() {
-    this.updateAuthUI();
-    document.getElementById('logoutBtn')?.addEventListener('click', () => {
-      AuthService.logout();
+  async initAuth() {
+    await this.updateAuthUI();
+    document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+      await supabase.auth.signOut();
       this.updateAuthUI();
       window.location.href = 'index.html';
     });
@@ -49,20 +21,21 @@ class SariBooks {
     const protectedPages = ['dashboard.html', 'transaction_input.html', 'tax_calculation.html'];
     const currentPage = window.location.pathname.split('/').pop();
     
-    if (protectedPages.includes(currentPage) && !AuthService.getCurrentUser()) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (protectedPages.includes(currentPage) && !session) {
       window.location.href = 'login.html';
     }
   }
 
-  updateAuthUI() {
-    const user = AuthService.getCurrentUser();
+  async updateAuthUI() {
+    const { data: { session } } = await supabase.auth.getSession();
     const authElements = document.querySelectorAll('.auth-only');
     const unauthElements = document.querySelectorAll('.unauth-only');
     
-    if (user) {
+    if (session) {
       authElements.forEach(el => el.style.display = '');
       unauthElements.forEach(el => el.style.display = 'none');
-      document.getElementById('usernameDisplay')?.textContent = user.username;
+      document.getElementById('usernameDisplay')?.textContent = session.user.email;
     } else {
       authElements.forEach(el => el.style.display = 'none');
       unauthElements.forEach(el => el.style.display = '');
@@ -99,7 +72,6 @@ class SariBooks {
   initTransactionForm() {
     const form = document.getElementById('transactionForm');
     if (form) {
-      // Add event listeners for real-time calculations
       document.getElementById('debitAmount')?.addEventListener('input', this.updateTransactionTotals.bind(this));
       document.getElementById('creditAmount')?.addEventListener('input', this.updateTransactionTotals.bind(this));
 
@@ -142,71 +114,6 @@ class SariBooks {
     document.getElementById('transactionForm').reset();
   }
 
-  // Password strength validation
-  checkPasswordStrength(password) {
-    const strengthBar = document.getElementById('passwordStrengthBar');
-    const lengthHint = document.getElementById('lengthHint');
-    const numberHint = document.getElementById('numberHint');
-    const specialHint = document.getElementById('specialHint');
-
-    // Reset all classes
-    strengthBar.className = 'password-strength-bar';
-    lengthHint.className = '';
-    numberHint.className = '';
-    specialHint.className = '';
-
-    // Check password requirements
-    const hasMinLength = password.length >= 8;
-    const hasNumber = /\d/.test(password);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-    // Update hints
-    if (hasMinLength) lengthHint.classList.add('text-success');
-    if (hasNumber) numberHint.classList.add('text-success');
-    if (hasSpecialChar) specialHint.classList.add('text-success');
-
-    // Calculate strength
-    let strength = 0;
-    if (hasMinLength) strength += 1;
-    if (hasNumber) strength += 1;
-    if (hasSpecialChar) strength += 1;
-
-    // Update strength meter
-    switch(strength) {
-      case 1:
-        strengthBar.classList.add('password-strength-weak');
-        break;
-      case 2:
-        strengthBar.classList.add('password-strength-fair');
-        break;
-      case 3:
-        strengthBar.classList.add('password-strength-strong');
-        break;
-      default:
-        strengthBar.style.width = '0%';
-    }
-  }
-
-  // Password match validation
-  validatePasswordMatch() {
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-    const messageElement = document.getElementById('passwordMatchMessage');
-
-    if (confirmPassword.length === 0) {
-      messageElement.textContent = '';
-      return;
-    }
-
-    if (password === confirmPassword) {
-      messageElement.textContent = 'Passwords match!';
-      messageElement.className = 'form-text text-success';
-    } else {
-      messageElement.textContent = 'Passwords do not match';
-      messageElement.className = 'form-text text-danger';
-    }
-  }
-
   // Toggle password visibility
   togglePasswordVisibility(fieldId) {
     const field = document.getElementById(fieldId);
@@ -222,65 +129,6 @@ class SariBooks {
       icon.classList.replace('fa-eye-slash', 'fa-eye');
       button.setAttribute('aria-label', 'Show password');
     }
-  }
-
-  // Validate registration form before submission
-  async validateRegistration(event) {
-    event.preventDefault();
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-    const strengthBar = document.getElementById('passwordStrengthBar');
-
-    // Check if passwords match
-    if (password !== confirmPassword) {
-      alert('Passwords do not match!');
-      return false;
-    }
-
-    // Check password strength (at least "fair")
-    if (!strengthBar.classList.contains('password-strength-fair') && 
-        !strengthBar.classList.contains('password-strength-strong')) {
-      alert('Password is too weak! Please choose a stronger password.');
-      return false;
-    }
-
-    // Hash passwords before submission
-    const hashedPassword = await this.hashPassword(password);
-    document.getElementById('password').value = hashedPassword;
-    document.getElementById('confirmPassword').value = hashedPassword;
-
-    // Submit the form programmatically
-    event.target.submit();
-    return true;
-  }
-
-  // Validate login form before submission
-  async validateLogin() {
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value.trim();
-
-    if (!username) {
-      alert('Please enter your username');
-      return false;
-    }
-
-    if (!password) {
-      alert('Please enter your password');
-      return false;
-    }
-
-    // Hash password before sending
-    const hashedPassword = await this.hashPassword(password);
-    document.getElementById('password').value = hashedPassword;
-    return true;
-  }
-
-  // Hash password using SHA-256
-  async hashPassword(password) {
-    const msgBuffer = new TextEncoder().encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 }
 
