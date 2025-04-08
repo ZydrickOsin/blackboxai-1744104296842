@@ -81,10 +81,15 @@
   </div>
 
   <script src="../static/js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    document.getElementById('registerForm').addEventListener('submit', (e) => {
+    const supabaseUrl = 'https://your-project.supabase.co';
+    const supabaseKey = 'your-anon-key';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const username = document.getElementById('username').value;
+      const email = document.getElementById('username').value;
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
       
@@ -92,12 +97,24 @@
         alert('Passwords do not match');
         return;
       }
-      
-      if (AuthService.register(username, password)) {
-        alert('Registration successful! Please login.');
+
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              username: document.getElementById('username').value
+            }
+          }
+        });
+
+        if (error) throw error;
+        
+        alert('Registration successful! Please check your email for verification.');
         window.location.href = 'login.html';
-      } else {
-        alert('Username already exists');
+      } catch (error) {
+        alert('Registration failed: ' + error.message);
       }
     });
   </script>
