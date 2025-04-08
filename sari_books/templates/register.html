@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register | SariBooks</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../static/css/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="auth-container py-5">
+    <div class="card border-0 shadow-sm auth-card" data-aos="fade-up">
+      <div class="card-header bg-white border-0 text-center py-4">
+        <h2 class="m-0">
+          <i class="fas fa-book-open text-primary me-2"></i>
+          <span class="text-gradient">SariBooks</span>
+        </h2>
+      </div>
+      <div class="card-body p-4 p-sm-5">
+        <form id="registerForm" onsubmit="return validateRegistration(event)">
+          <div class="mb-4">
+            <div class="form-floating">
+              <input type="text" class="form-control" id="username" placeholder="Username" required>
+              <label for="username">Username</label>
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <div class="form-floating">
+              <div class="input-group">
+                <input type="password" class="form-control" id="password" placeholder="Password" required 
+                       oninput="checkPasswordStrength(this.value)">
+                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('password')">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+              <label for="password">Password</label>
+              <div class="password-strength">
+                <div class="password-strength-bar" id="passwordStrengthBar"></div>
+              </div>
+              <div class="password-hints">
+                <ul>
+                  <li id="lengthHint">At least 8 characters</li>
+                  <li id="numberHint">Contains a number</li>
+                  <li id="specialHint">Contains a special character</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <div class="form-floating">
+              <div class="input-group">
+                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" required
+                       oninput="validatePasswordMatch()">
+                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('confirmPassword')">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+              <label for="confirmPassword">Confirm Password</label>
+              <div id="passwordMatchMessage" class="form-text"></div>
+            </div>
+          </div>
+          
+          <div class="d-grid gap-2 mb-4">
+            <button type="submit" class="btn btn-primary btn-lg py-3">
+              <i class="fas fa-user-plus me-2"></i>Create Account
+            </button>
+          </div>
+          
+          <div class="text-center pt-3">
+            <p class="mb-0 text-muted">
+              Already have an account?
+              <a href="login.html" class="text-primary fw-bold">Sign in</a>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../static/js/main.js"></script>
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      if (password !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+      }
+      
+      if (AuthService.register(username, password)) {
+        alert('Registration successful! Please login.');
+        window.location.href = 'login.html';
+      } else {
+        alert('Username already exists');
+      }
+    });
+  </script>
+</body>
+</html>
