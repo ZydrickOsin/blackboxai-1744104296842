@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Transaction | SariBooks</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../static/css/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <i class="fas fa-book-open me-2"></i>SariBooks
+      </a>
+      <div class="d-flex align-items-center">
+        <span class="text-light me-3 auth-only" style="display:none">
+          <i class="fas fa-user-circle me-1"></i>
+          <span id="usernameDisplay"></span>
+        </span>
+        <div>
+          <a href="dashboard.html" class="btn btn-outline-light me-2">
+            <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+          </a>
+          <button id="logoutBtn" class="btn btn-outline-light auth-only" style="display:none">
+            <i class="fas fa-sign-out-alt me-1"></i>Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Transaction Form -->
+  <div class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white border-0">
+            <h3 class="card-title m-0">
+              <i class="fas fa-plus-circle text-primary me-2"></i>
+              New Transaction
+            </h3>
+          </div>
+          <div class="card-body">
+            <form id="transactionForm">
+              <div class="row mb-4">
+                <div class="col-md-4">
+                  <div class="form-floating mb-3">
+                    <input type="date" class="form-control" id="transactionDate" placeholder="Date" required>
+                    <label for="transactionDate">Date</label>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-floating mb-3">
+                    <input type="number" step="0.01" class="form-control" id="debitAmount" placeholder="Debit">
+                    <label for="debitAmount">Debit (₱)</label>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-floating mb-3">
+                    <input type="number" step="0.01" class="form-control" id="creditAmount" placeholder="Credit">
+                    <label for="creditAmount">Credit (₱)</label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="alert alert-success mb-4">
+                <div class="row">
+                  <div class="col-md-6">
+                    <strong>Total Debit:</strong> ₱<span id="totalDebit">0.00</span>
+                  </div>
+                  <div class="col-md-6">
+                    <strong>Total Credit:</strong> ₱<span id="totalCredit">0.00</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-4">
+                <label class="form-label fw-bold">Category</label>
+                <div class="btn-group w-100" role="group">
+                  <input type="radio" class="btn-check" name="category" id="category-sales" value="sales" autocomplete="off" required>
+                  <label class="btn btn-outline-primary" for="category-sales">
+                    <i class="fas fa-money-bill-wave me-2"></i>Sales
+                  </label>
+                  
+                  <input type="radio" class="btn-check" name="category" id="category-expense" value="expense" autocomplete="off">
+                  <label class="btn btn-outline-primary" for="category-expense">
+                    <i class="fas fa-receipt me-2"></i>Expense
+                  </label>
+                  
+                  <input type="radio" class="btn-check" name="category" id="category-supplies" value="supplies" autocomplete="off">
+                  <label class="btn btn-outline-primary" for="category-supplies">
+                    <i class="fas fa-boxes me-2"></i>Supplies
+                  </label>
+                  
+                  <input type="radio" class="btn-check" name="category" id="category-salary" value="salary" autocomplete="off">
+                  <label class="btn btn-outline-primary" for="category-salary">
+                    <i class="fas fa-user-tie me-2"></i>Salary
+                  </label>
+                </div>
+              </div>
+              
+              <div class="mb-4">
+                <label class="form-label fw-bold">Description</label>
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="fas fa-align-left"></i>
+                  </span>
+                  <textarea class="form-control" id="transactionDescription" rows="3" placeholder="Enter transaction details"></textarea>
+                </div>
+              </div>
+              
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg py-3">
+                  <i class="fas fa-save me-2"></i>Save Transaction
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../static/js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
