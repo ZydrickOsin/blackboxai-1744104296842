@@ -1,0 +1,109 @@
+/* SariBooks - Shared CSS Styles */
+/* These styles complement Tailwind CSS utility classes */
+
+/* Base styles */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Sidebar transitions */
+.sidebar {
+    transition: all 0.3s ease;
+}
+.sidebar.collapsed {
+    width: 5rem;
+}
+.sidebar.collapsed .nav-text {
+    display: none;
+}
+.main-content {
+    transition: margin-left 0.3s ease;
+}
+
+/* Form input error states */
+.input-error {
+    border-color: #f05252;
+}
+
+/* Progress bar styles */
+.progress-bar {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #e5e7eb;
+    overflow: hidden;
+}
+.progress-fill {
+    height: 100%;
+    background-color: #1C64F2;
+    transition: width 0.5s ease;
+}
+
+/* Transaction table row hover */
+.transaction-row:hover {
+    background-color: #f9fafb;
+}
+
+/* Toast notifications */
+.toast {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    color: white;
+    animation: slideIn 0.3s ease-out;
+}
+.toast.success {
+    background-color: #10B981;
+}
+.toast.error {
+    background-color: #EF4444;
+}
+.toast.info {
+    background-color: #3B82F6;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    body {
+        background-color: white !important;
+        color: black !important;
+    }
+    .sidebar, header {
+        display: none;
+    }
+    .main-content {
+        margin-left: 0 !important;
+    }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
